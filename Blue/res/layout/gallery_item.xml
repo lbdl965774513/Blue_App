@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/padding8"
+    android:orientation="vertical" xmlns:app="http://schemas.android.com/apk/res/com.blue">
+    
+    <TextView 
+        android:id="@+id/ctime_gallery_item_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ctime"
+        android:textSize="@dimen/textsize16"
+        android:textStyle="bold"/>
+    
+    <com.blue.lib.view.FlowLayout 
+        android:id="@+id/photo_gallery_item_fl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin5"
+        app:horizontalSpacing="@dimen/padding5"
+        app:verticalSpacing="@dimen/padding5"
+        app:orientation="horizontal">
+    </com.blue.lib.view.FlowLayout>
+
+</LinearLayout>

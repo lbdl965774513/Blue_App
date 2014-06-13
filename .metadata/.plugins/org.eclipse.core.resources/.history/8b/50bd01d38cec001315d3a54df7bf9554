@@ -1,0 +1,518 @@
+package com.blue.ui.news;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.json.JSONObject;
+
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ImageSpan;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
+import android.widget.GridView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.blue.R;
+import com.blue.adapter.GridViewFaceAdapter;
+import com.blue.app.BlueApplication;
+import com.blue.app.BlueException;
+import com.blue.async.PostAsync;
+import com.blue.lib.view.FlowLayout;
+import com.blue.lib.volley.Request.Method;
+import com.blue.lib.volley.RequestQueue;
+import com.blue.lib.volley.Response.Listener;
+import com.blue.lib.volley.toolbox.JsonObjectRequest;
+import com.blue.lib.volley.toolbox.Volley;
+import com.blue.ui.BaseActivity;
+import com.blue.util.HttpUtils;
+import com.blue.util.ImageCrop;
+import com.blue.util.LoginUtils;
+import com.nostra13.universalimageloader.core.ImageLoader;
+
+/**
+ * @author SLJM
+ * @create 2014-3-24
+ * @version 1.0
+ * @desc 行业资讯、公司新闻.大咖秀    评论 转发 发布     帖子
+ * @desc 标识  发布(0)   转发(1)   评论(2)  回复评论(3)
+ */
+
+public class NewsCommentActivity extends BaseActivity implements OnClickListener,OnItemClickListener,OnCheckedChangeListener{
+
+	private EditText content_et;
+	private CheckBox checkBox;
+	private FlowLayout photoFlowLayout;
+	private ImageView camera_iv,photo_iv,inform_iv,expression_iv;
+	//actionbar
+	private ImageButton cancel_actionBar_ib,post_actionBar_ib;
+	private TextView title_actionBar_tv;
+	private GridView tweet_faces;
+	private ImageCrop mImageCrop;
+	private String mArticle_id;
+	private String mComment_id;
+	private RequestQueue requestQueue;
+	/**标识  发布(0)   转发(1)   评论(2) 回复评论(3)*/
+	private int index;
+	private Boolean isCheck = false;
+	//发帖上传图片的个数  最多为5个
+	private int pic_count = 0;
+	// 存放图片地址的URI
+	private String[] picUri_array = new String[5];
+	private ImageLoader imageLoader;
+	private InputMethodManager imm;
+	private static final String TAG = "NewsCommentActivity";
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.comment);
+		
+		initView();
+		
+ 	}
+
+	public void initView() {
+		
+		
+		imageLoader = ImageLoader.getInstance();
+		requestQueue = Volley.newRequestQueue(this);
+//		InputMethodManager m = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+		
+		cancel_actionBar_ib = (ImageButton) findViewById(R.id.post_actionbar_ib);
+		post_actionBar_ib = (ImageButton) findViewById(R.id.user_actionbar_ib);
+		title_actionBar_tv = (TextView) findViewById(R.id.title_center_actionbar_main_tv);
+		
+		content_et = (EditText) findViewById(R.id.content_comment_et);
+		checkBox = (CheckBox) findViewById(R.id.checkBox_comment_cb);
+		photoFlowLayout = (FlowLayout)findViewById(R.id.photo_pic_fl);
+		photo_iv = (ImageView) findViewById(R.id.photo_comment_iv);
+		camera_iv = (ImageView) findViewById(R.id.camera_comment_iv);
+		inform_iv = (ImageView) findViewById(R.id.inform_comment_iv);
+		expression_iv = (ImageView) findViewById(R.id.expression_comment_iv);
+		
+		tweet_faces = (GridView)findViewById(R.id.tweet_pub_faces);
+		imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE); // 输入法管理
+		mImageCrop = new ImageCrop(this);
+		
+		getIntentData();
+		
+		post_actionBar_ib.setOnClickListener(this);
+		cancel_actionBar_ib.setOnClickListener(this);
+		checkBox.setOnCheckedChangeListener(this);
+		photo_iv.setOnClickListener(this);
+		camera_iv.setOnClickListener(this);
+		inform_iv.setOnClickListener(this);
+		expression_iv.setOnClickListener(this);
+		expression_iv.setOnClickListener(faceClickListener);
+		content_et.setOnClickListener(this);
+		
+		initCheckBox();
+	}
+	private View.OnClickListener faceClickListener = new View.OnClickListener() {
+		public void onClick(View v) {
+			showOrHideIMM();
+		}
+	};
+	private GridViewFaceAdapter mGVFaceAdapter;
+	
+	/**得到Intent传来的值*/
+	private void getIntentData() {
+		
+		cancel_actionBar_ib.setImageDrawable(getResources().getDrawable(R.drawable.return_imagebutton));
+		post_actionBar_ib.setImageDrawable(getResources().getDrawable(R.drawable.post));
+		
+		Intent intent = getIntent();
+		index = intent.getIntExtra("index", -1);
+		
+		switch (index) {
+		//发布
+		case 0:
+			title_actionBar_tv.setText(R.string.post);
+			break;
+		//转发
+		case 1:
+			camera_iv.setVisibility(View.GONE);
+			photo_iv.setVisibility(View.GONE);
+			title_actionBar_tv.setText(R.string.forward);
+			mArticle_id = intent.getStringExtra("article_id");
+			break;
+		//评论
+		case 2:
+			camera_iv.setVisibility(View.GONE);
+			photo_iv.setVisibility(View.GONE);
+			title_actionBar_tv.setText(R.string.comment);
+			mArticle_id = intent.getStringExtra("article_id");
+			break;
+		//回复评论
+		case 3:
+			camera_iv.setVisibility(View.GONE);
+			photo_iv.setVisibility(View.GONE);
+			title_actionBar_tv.setText(R.string.response_comment);
+			mComment_id = intent.getStringExtra("fid");
+			break;
+		}
+		
+	}
+
+	/**
+	 * 第一个参数：这个整数requestCode提供给onActivityResult，是以便确认返回的数据是从哪个Activity返回的。
+	 * 这个requestCode和startActivityForResult中的requestCode相对应。
+	 * startActivityForResult 如果> = 0
+	 * 当Activity结束时requestCode将归还在onActivityResult()中。
+	 * 以便确定返回的数据是从哪个Activity中返回
+	 * 
+	 * 第二个参数：这整数resultCode是由子Activity通过其setResult()方法返回。
+	 * 当Activity结束时resultCode将归还在onActivityResult()中，一般为RESULT_CANCELED ,
+	 * RESULT_OK。
+	 * 
+	 * 第三个参数：一个Intent对象，带有返回的数据。 一个Intent对象，返回给父Activity的数据。
+	 * */
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Uri picUri = mImageCrop.onActivityResult(requestCode, resultCode, data);
+		ImageView pic_iv;
+		Log.i(TAG, "返回的Uri" + picUri);
+		if (picUri != null && !picUri.equals(picUri.EMPTY)) {
+
+			if (pic_count < 1) {
+				String picUri_path = picUri.getPath();
+				pic_iv = new ImageView(this);
+				pic_iv.setScaleType(ScaleType.FIT_CENTER);
+				photoFlowLayout.addView(pic_iv, new LayoutParams(100, 100));
+				imageLoader.displayImage(picUri.toString(), pic_iv);
+
+				picUri_array[pic_count] = picUri_path;
+				pic_count++;
+
+			} else
+				Toast.makeText(this, "最多添加1张图片", Toast.LENGTH_SHORT).show();
+		}
+	}
+	
+	/** 把存放图片URI数组里面的值取出来放到Map中(发帖) */
+	public Map<String,String> setPicArrayToMap() {
+		
+		Map<String,String> picUri_Map = new HashMap<String,String>();
+		
+		for (int i = 0; i < pic_count; i++) {
+			
+			picUri_Map.put("image", picUri_array[i]);
+		}
+		
+		return picUri_Map;
+
+	}
+	
+	/**提交信息*/
+	private void submitInfo() {
+		if (index == 1) {
+			Log.i(TAG, "comment and forward = " + addInfoToMap().get("re_comment"));
+		}else if(index ==2){
+			Log.i(TAG, "comment and forward = " + addInfoToMap().get("re_post"));
+			
+		}
+		
+		JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Method.POST, getUrl(), addInfoToMap(),
+				new Listener<JSONObject>() {
+
+					@Override
+					public void onResponse(JSONObject response) {
+						Log.i(TAG, "forward or comment or response_comment" + response);
+						if (response == null || response.optString("code").equals("0")) {
+							BlueException.toast(BlueException.CONNECT_EXCEPTION);
+							return;
+						}
+						analyseData(response);
+					}
+		}, null);
+		
+		requestQueue.add(jsonObjectRequest);
+		requestQueue.start();
+	}
+
+	/**解析返回的信息*/
+	private void analyseData(JSONObject response) {
+
+		if (response.optString("code").equals("1")){
+			BlueException.toast("操作成功");
+			this.finish();
+		}else{
+			BlueException.toast("操作失败");
+			
+		}
+		
+		this.finish();
+	}
+
+	
+	private String getUrl(){
+		
+		String url = null;
+		
+		switch (index) {
+		//发布
+		case 0:
+			url = HttpUtils.initArticleURL("article_add");
+			break;
+		//转发
+		case 1:
+			url = HttpUtils.initArticleURL("article_re");
+			break;
+		//评论  回复评论
+		case 2:
+		case 3:
+			url = HttpUtils.initArticleURL("comment_add");			
+			break;
+		}
+		return url;
+	}
+
+	/**添加所需要的信息 to Map*/
+	private Map<String,String> addInfoToMap() {
+		
+		Map<String,String> map = new HashMap<String,String>();
+		String user_id = LoginUtils.getLoginUserid(this);
+		
+		map.put("user_id", user_id);
+		map.put("info", content_et.getText().toString());
+		
+		switch (index) {
+		//发布
+		case 0:
+			map.put("phone_type", BlueApplication.PHONE_TYPE);
+			break;
+		//转发
+		case 1:
+			map.put("article_id", mArticle_id);
+			map.put("phone_type", BlueApplication.PHONE_TYPE);
+			Log.i(TAG, "forward same comment = " + isCheck);
+			Log.i(TAG, "isCheck = " + isCheck);
+			
+			if (isCheck) {
+				map.put("re_comment", "1");
+			}else{
+				map.put("re_comment", "0");
+				
+			}
+			break;
+		//评论
+		case 2:
+			map.put("article_id", mArticle_id);
+			Log.i(TAG, "comment same forward = " + isCheck);
+			Log.i(TAG, "isCheck = " + isCheck);
+			if (isCheck) {
+				map.put("re_post", "1");
+			}else{
+				map.put("re_post", "0");
+				
+			}
+			break;
+		//回复评论
+		case 3:
+			map.put("article_id", mArticle_id);
+			map.put("fid", mComment_id);
+			break;
+		}
+		
+		return map;
+	}
+
+	
+	/**检查评论内容*/
+	private Boolean checkInfo() {
+		
+		if (content_et.getText().toString().equals("")) {
+			BlueException.toast(BlueException.NOT_BE_EMPTY);
+			return false;
+		}else{
+			return true;
+		}
+	
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public void onClick(View v) {
+		
+		Map<String,String> pic_map,content_map;
+		PostAsync postAsync = new PostAsync(this,pic_count);
+//		Log.i(TAG, "come here to come login?"+BlueApplication.isLogin(this));
+		switch (v.getId()) {
+		//发帖
+		case R.id.user_actionbar_ib:
+			if (BlueApplication.isLogin(this) && checkInfo()) {
+				//
+				if (index == 0) {
+					pic_map = setPicArrayToMap();
+					content_map = addInfoToMap();
+					postAsync.execute(pic_map,content_map);
+				}else{
+					submitInfo();
+				}
+			}
+			break;
+		//取消
+		case R.id.post_actionbar_ib:
+			this.finish();
+			break;
+			
+		//相机
+		case R.id.camera_comment_iv:
+//			mImageCrop.showDialog();
+			mImageCrop.CameraPhoto();
+			break;
+		//本地照片
+		case R.id.photo_comment_iv:
+			mImageCrop.LocationPhoto();
+			break;
+		//通知
+		case R.id.inform_comment_iv:
+			
+			break;
+		//表情
+	    case R.id.expression_comment_iv:
+	    	showOrHideIMM();
+	    	
+	    	break;
+	    case R.id.content_comment_et:
+	    	showIMM();
+	    	break;
+
+		default:
+			break;
+		}
+		
+	}
+	/**
+	 * 表情
+	 */
+	private void initGridView() {
+		mGVFaceAdapter = new GridViewFaceAdapter(this);
+		tweet_faces.setAdapter(mGVFaceAdapter);
+		tweet_faces.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// 插入的表情
+				SpannableString ss = new SpannableString(view.getTag()
+						.toString());
+				Drawable d = getResources().getDrawable(
+						(int) mGVFaceAdapter.getItemId(position));
+				d.setBounds(0, 0, 35, 35);// 设置表情图片的显示大小
+				ImageSpan span = new ImageSpan(d, ImageSpan.ALIGN_BOTTOM);
+				ss.setSpan(span, 0, view.getTag().toString().length(),
+						Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+				// 在光标所在处插入表情
+				System.out.println("SpannableString:  " + ss);
+				content_et.getText().insert(content_et.getSelectionStart(), ss);
+			}
+		});
+	}
+
+	/**
+	 * 显示键盘
+	 */
+	private void showIMM() {
+		expression_iv.setTag(1);
+		showOrHideIMM();
+	}
+	/**
+	 * 显示键盘
+	 */
+	private void showOrHideIMM() {
+		if (expression_iv.getTag() == null) {
+			// 隐藏软键盘
+			imm.hideSoftInputFromWindow(expression_iv.getWindowToken(), 0);
+			// 显示表情
+			showFace();
+		} else {
+			// 显示软键盘
+			imm.showSoftInput(content_et, 0);
+			// 隐藏表情
+			hideFace();
+		}
+	}
+	/**
+	 * 显示表情
+	 */
+	private void showFace() {
+		expression_iv.setTag(1);
+		tweet_faces.setVisibility(View.VISIBLE);
+	}
+
+	/**
+	 * 隐藏表情
+	 */
+	private void hideFace() {
+		expression_iv.setTag(null);
+		tweet_faces.setVisibility(View.GONE);
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		
+		//这是什么意思啊
+		Bitmap bitmap = null;
+		//解码位图资源，获取位图 
+//		bitmap = BitmapFactory.decodeResource(getResources(), faceIds[position % faceIds.length]);
+		ImageSpan imageSpan = new ImageSpan(this, bitmap);
+		String str = null;
+		if(position<10){
+			str = "f00"+position;
+		}else if(position<50){
+			str = "f0"+position;
+		}
+		SpannableString spannableString = new SpannableString(str);
+		spannableString.setSpan(imageSpan, 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		content_et.append(spannableString);
+	}
+
+	/**不同的页面对CheckBox进行处理*/
+	private void initCheckBox() {
+		switch (index) {
+		//发布
+		case 0:
+			checkBox.setVisibility(View.GONE);
+			break;
+		//转发
+		case 1:
+			checkBox.setText("同时评论给TA");
+			break;
+		//评论
+		case 2:
+			checkBox.setText("同时转发给我的大咖秀");
+			break;
+		}
+	}
+
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		
+		isCheck = isChecked;
+	}
+	@Override
+	protected void onStop() {
+		super.onStop();
+		requestQueue.stop();
+	}
+
+}

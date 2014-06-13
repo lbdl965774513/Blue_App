@@ -1,0 +1,392 @@
+package com.blue.ui.fragment;
+
+import java.util.ArrayList;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.ViewFlipper;
+
+import com.actionbarsherlock.app.SherlockFragment;
+import com.blue.R;
+import com.blue.adapter.NewsListAdapter;
+import com.blue.app.BlueApplication;
+import com.blue.bean.Note;
+import com.blue.conninternet.ListDataRequest;
+import com.blue.global.NewsOnItemClickListener;
+import com.blue.lib.ptr.PullToRefreshBase;
+import com.blue.lib.ptr.PullToRefreshBase.OnLastItemVisibleListener;
+import com.blue.lib.ptr.PullToRefreshBase.OnRefreshListener;
+import com.blue.lib.ptr.PullToRefreshListView;
+import com.blue.lib.volley.Request.Method;
+import com.blue.lib.volley.RequestQueue;
+import com.blue.lib.volley.Response.Listener;
+import com.blue.lib.volley.toolbox.JsonObjectRequest;
+import com.blue.lib.volley.toolbox.Volley;
+import com.blue.ui.user.UserCenterActivity;
+import com.blue.util.HttpUtils;
+import com.blue.util.LoginUtils;
+import com.blue.util.SubmitPara;
+import com.nostra13.universalimageloader.core.ImageLoader;
+
+/**
+ * @author SLJM
+ * @create 2014-3-21
+ * @version 1.0
+ * @desc 首页 行业资讯
+ */
+
+public class HomeFragment extends SherlockFragment implements OnClickListener,OnLastItemVisibleListener, OnRefreshListener<ListView>,OnGestureListener{
+
+	// 主页面控件
+	private ListView lv;
+	private PullToRefreshListView home_main_lv;
+	private ImageButton user_center_ib,post_ib;
+	private TextView title_tv;
+	// 头部控件
+	private View headerView;
+	private ViewFlipper img_header_vf;
+	private LinearLayout point_header_ll;
+	// 头部point集合
+	private ArrayList<ImageView> point_header_array;
+	// 头部ImageView的集合
+	private ArrayList<ImageView> img_header_array;
+	/** 帖子标识(第几条帖子)*/
+	private int page_number = 0;
+	//每页帖子条数
+	private static final int page_length = 10;
+	private Context context;
+	private NewsListAdapter homeAdapter;
+	private LayoutInflater layoutInflater;
+	private ImageLoader imageLoader;
+	private Thread thread;
+	private RequestQueue requestQueue;
+	private final static String TAG = "HomeFragment";
+
+	public HomeFragment(){
+		super();
+	}
+	
+	public static HomeFragment getInstance(){
+		HomeFragment homeFragment = new HomeFragment();
+		
+		return homeFragment;
+	}
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		
+		View showLayout = inflater.inflate(R.layout.home, container, false);
+		requestQueue = Volley.newRequestQueue(getActivity());
+		
+		initView(showLayout, inflater);
+		getArticleList(page_number);
+		
+		requestQueue.start();
+
+		return showLayout;
+
+	}
+
+	/** 初始化首页面布局元素 */
+	private void initView(View contentView, LayoutInflater inflater) {
+		
+		context = getActivity();
+//		gestureDetector = new GestureDetector(context, listener)
+		imageLoader = ImageLoader.getInstance();
+		home_main_lv = (PullToRefreshListView) contentView.findViewById(R.id.home_main_lv);
+		//actionbar 
+		post_ib = (ImageButton)contentView.findViewById(R.id.post_actionbar_ib);
+		user_center_ib = (ImageButton)contentView.findViewById(R.id.user_actionbar_ib);
+		title_tv = (TextView)contentView.findViewById(R.id.title_center_actionbar_main_tv);
+		
+		title_tv.setText("首页");
+		post_ib.setVisibility(View.GONE);
+		
+		home_main_lv.setOnRefreshListener(this);
+		home_main_lv.setOnLastItemVisibleListener(this);
+		lv = home_main_lv.getRefreshableView();
+		lv.setOnItemClickListener(new NewsOnItemClickListener(getActivity(),0));
+//		home_main_lv.setOnItemClickListener(this);
+		user_center_ib.setOnClickListener(this);
+		
+		initHeaderView();
+
+	}
+
+	/** 初始化头部图片 */
+	private void initHeaderView() {
+		layoutInflater = LayoutInflater.from(getActivity());
+//		layoutInflater = (LayoutInflater) getActivity().getSystemService(getActivity().LAYOUT_INFLATER_SERVICE);
+		headerView = layoutInflater.inflate(R.layout.main_header_image, null);
+		img_header_vf = (ViewFlipper) headerView.findViewById(R.id.img_main_header_vf);
+		point_header_ll = (LinearLayout) headerView.findViewById(R.id.point_main_header_ll);
+
+		getHeaderImg();
+
+	}
+	/**获取滚动的图片*/
+	private void getHeaderImg() {
+		JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Method.POST, HttpUtils.initArticleURL("Banner_list"),
+				null, new Listener<JSONObject>() {
+
+					@Override
+					public void onResponse(JSONObject response) {
+						Log.i(TAG, "header image"+response);
+						if (response.optString("code").equals("1")) {
+							
+							try {
+								initHeaderImageView(response.getJSONArray("content"));
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				}, null);
+		requestQueue.add(jsonObjectRequest);
+		requestQueue.start();
+	}
+	/** 初始化头部滚动大图片 
+	 * @throws JSONException */
+	private void initHeaderImageView(JSONArray jsonArray) throws JSONException {
+		JSONArray image_array = jsonArray;
+		img_header_array = new ArrayList<ImageView>();
+
+		ImageView img_header;
+//		LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT);
+		
+		for (int i = 0; i < image_array.length(); i++) {
+			img_header = new ImageView(getActivity());
+
+			img_header.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 300));
+			img_header.setScaleType(ImageView.ScaleType.CENTER_CROP);
+			imageLoader.displayImage(image_array.optString(i), img_header);
+			img_header_vf.addView(img_header);
+			img_header_array.add(img_header);
+		}
+
+		initHeaderPoint();
+
+		draw_Point(0);// 默认首次进入
+		lv.addHeaderView(headerView);// 要写在setAdapter前面
+		autoChangeImg();
+	}
+
+	/** 初始化头部point */
+	private void initHeaderPoint() {
+		point_header_array = new ArrayList<ImageView>();
+		// 创建point的ImageView
+		ImageView point_img_header;
+
+		for (int i = 0; i < img_header_array.size(); i++) {
+			point_img_header = new ImageView(getActivity());
+			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+					new ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT,
+							LayoutParams.WRAP_CONTENT));
+			layoutParams.leftMargin = 30;
+
+			point_header_ll.addView(point_img_header, layoutParams);
+
+			point_header_array.add(point_img_header);
+		}
+	}
+
+	/** 更新选中点 */
+	private void draw_Point(int index) {
+		for (int i = 0; i < point_header_array.size(); i++) {
+			point_header_array.get(i).setImageResource(
+					R.drawable.main_header_unfocused);
+		}
+		point_header_array.get(index).setImageResource(
+				R.drawable.main_header_focused);
+	}
+	
+	/** 获取行业资讯列表信息 */
+	private void getArticleList(int number) {
+		 
+		 ListDataRequest listDataRequest = new ListDataRequest(Method.POST, HttpUtils.initArticleURL("article_list"), 
+				 SubmitPara.getNoteList(4, number), new Listener<ArrayList<Note>>() {
+
+					@Override
+					public void onResponse(ArrayList<Note> response) {
+						Log.i(TAG, "news list  = " + response);
+						if (response != null && !response.isEmpty()) {
+							initAdapter(response);
+						}
+					}
+				}, null); 
+		 requestQueue.add(listDataRequest);
+		
+	}
+	/**初始化适配器*/
+	private void initAdapter(ArrayList<Note> note_array) {
+		
+		if(homeAdapter == null){
+			homeAdapter = new NewsListAdapter(getActivity(),note_array);
+			home_main_lv.setAdapter(homeAdapter);
+		}else{
+			if (page_number == 0) {
+				homeAdapter.addFirstPageData(note_array);
+			} else {
+				homeAdapter.addOtherPageData(note_array);
+			}
+		}
+		
+		home_main_lv.onRefreshComplete();
+	}
+
+	/***
+	 * 返回当前第几屏
+	 */
+	private int getPageIndex(View view) {
+		for (int i = 0; i < img_header_array.size(); i++) {
+			if (view == img_header_array.get(i))
+				return i;
+		}
+		return 0;
+
+	}
+
+	/** 图片自动切换 */
+	private void autoChangeImg() {
+		int pageIndex = getPageIndex(img_header_vf.getCurrentView());
+		
+		if (pageIndex == img_header_vf.getChildCount() - 1){
+			pageIndex = 0;
+		}			
+		else{
+			pageIndex++;
+		}
+		img_header_vf.showNext();
+		draw_Point(pageIndex);
+		
+		img_header_vf.startFlipping();
+		
+		thread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		thread.start();
+		
+	}
+	
+
+	@Override
+	public void onClick(View v) {
+		
+		Intent intent = new Intent(context, UserCenterActivity.class);
+		
+		switch (v.getId()) {
+		case R.id.user_actionbar_ib:
+			if(BlueApplication.isLogin(context)){
+				intent.putExtra("user_id", LoginUtils.getLoginUserid(context));
+				startActivity(intent);
+			}
+			break;
+		}
+	}
+
+	@Override
+	public void onLastItemVisible() {
+		Log.i(TAG, "last item visible");
+		page_number = page_number + page_length;
+		getArticleList(page_number);
+		requestQueue.start();
+	}
+
+
+	@Override
+	public void onRefresh(PullToRefreshBase<ListView> refreshView) {
+		page_number = 0;
+		getArticleList(page_number);
+		requestQueue.start();
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		requestQueue.stop();
+		thread.stop();
+	}
+
+	@Override
+	public boolean onDown(MotionEvent arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean onFling(MotionEvent e1, MotionEvent e2, float arg2,
+			float arg3) {
+		
+		if (e1.getX() > e2.getX()) {
+			img_header_vf.showNext();
+		}else if(e1.getX() < e2.getX()){
+			img_header_vf.setInAnimation(context,R.anim.push_right_in);
+			img_header_vf.setOutAnimation(context,R.anim.push_right_out);
+			img_header_vf.showPrevious();
+			img_header_vf.setInAnimation(context, R.anim.push_left_in);
+			img_header_vf.setOutAnimation(context,R.anim.push_left_out);
+		}else {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public void onLongPress(MotionEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float arg2,
+			float arg3) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void onShowPress(MotionEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean onSingleTapUp(MotionEvent arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+
+}

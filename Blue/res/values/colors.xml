@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="none">#00000000</color>
+    <color name="grey">#E6E6E6</color>
+    <color name="gray">#464646</color>
+    <color name="gray_btn">#E5E5E5</color>
+    <color name="cobaltBlue">#013763</color>
+    <color name="grey1">#82858b</color>
+    <color name="hengxian">#cecece</color>
+    <color name="cyan">#00ffff</color>
+    <color name="blue">#328AEC</color>
+    <color name="yellow">#EFA601</color>
+    <color name="orange">#FF9900</color>
+    <color name="green">#6EB74B</color>
+    <color name="view_onclick">#247de1</color>
+    <!--赞  分享  评论 转发  背景色 -->
+    <color name="white_more">#F9F9F9</color>
+    <!-- 转发的内容(淡蓝色) -->
+    <color name="nattier_blue">#C8E3FE</color>
+    <!--评论界面  赞  分享  评论 转发  背景色 -->
+    <color name="gray02">#3F3F3F</color>
+    <color name="customEditLabel">#C1C1C1</color>
+    <color name="title_listview_items_textcolor">#616161</color>
+    <color name="content_listview_items_textcolor">#ABABAB</color>
+    <color name="interaction_listview_items_textcolor">#CBCBCB</color>
+    <!-- 表情背景颜色 -->
+      <color name="face_bg">#eef1f4</color> 
+</resources>

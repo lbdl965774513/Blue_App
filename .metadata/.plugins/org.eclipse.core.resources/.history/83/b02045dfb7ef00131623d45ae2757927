@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:layout_margin="@dimen/margin10"
+    android:padding="@dimen/padding20"
+    android:background="@drawable/forward_bg">
+
+    <TextView
+        android:id="@+id/name_forward_note_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="name"
+        android:textSize="@dimen/textsize14"/>
+    <TextView
+        android:id="@+id/content_forward_note_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@id/name_forward_note_tv"
+        android:layout_marginLeft="@dimen/margin3"
+        android:text="content"
+        android:textSize="@dimen/textsize14"/>
+    
+    <com.blue.lib.view.FlowLayout 
+        android:id="@+id/img_forward_note_fl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/content_forward_note_tv"
+        android:layout_marginTop="@dimen/margin5"
+        android:layout_alignParentBottom="true"
+        android:paddingLeft="@dimen/padding5">
+        
+    </com.blue.lib.view.FlowLayout>
+
+</RelativeLayout>

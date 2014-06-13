@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="base_g_min_h">32dp</dimen>
+    <dimen name="base_g_item_min_h">48dp</dimen>
+    <dimen name="base_g_medium_h">40dp</dimen>
+    <dimen name="base_viewpager_h">170dp</dimen>
+    <dimen name="base_slidmenu_behind_offset">60dp</dimen>
+    <dimen name="base_left_slidmenu_photo_H">192dp</dimen>
+    <dimen name="base_user_icon">64dp</dimen>
+    <dimen name="base_text_Micro">12sp</dimen>
+    <dimen name="base_text_Small">14sp</dimen>
+    <dimen name="base_text_Small_">16sp</dimen>
+    <dimen name="base_text_Medium">18sp</dimen>
+    <dimen name="base_text_Medium_">20sp</dimen>
+    <dimen name="base_text_Large">22sp</dimen>
+    <dimen name="base_pitch_Micro">4dp</dimen>
+    <dimen name="base_pitch_Items">8dp</dimen>
+    <dimen name="base_pitch_Items_">12dp</dimen>
+    <dimen name="base_pitch_Edge">16dp</dimen>
+    <dimen name="base_pitch_Small">2dp</dimen>
+    <!--  -->
+    <dimen name="base_jy_item_rl_H">72dp</dimen>
+    <dimen name="base_item_news_photo_w">96dp</dimen>
+    <dimen name="base_item_news_photo_h">72dp</dimen>
+    <dimen name="base_vp_banner_h">160dp</dimen>
+
+</resources>

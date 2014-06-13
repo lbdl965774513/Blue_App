@@ -1,0 +1,89 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".UserdataActivity" >
+
+    <RelativeLayout
+        android:id="@+id/top_data_fl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/user_center_bg"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/head_data_iv"
+            android:layout_width="56dip"
+            android:layout_height="56dip"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="@dimen/margin30"
+            android:src="@drawable/user_center_ic" 
+            />
+
+        <TextView
+            android:id="@+id/name_data_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/head_data_iv"
+            android:layout_marginTop="@dimen/margin18"
+            android:layout_marginLeft="@dimen/margin10"
+            android:textSize="@dimen/textsize20"
+            android:textColor="@color/white"
+            android:text="姓名" />
+        
+        <ImageView
+            android:id="@+id/gender_data_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/name_data_tv"
+            android:layout_marginTop="@dimen/margin10"
+            android:layout_below="@id/name_data_tv"
+            android:src="@drawable/girl" />
+
+        <TextView
+            android:id="@+id/age_data_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/gender_data_iv"
+            android:layout_alignTop="@id/gender_data_iv"
+            android:layout_below="@id/name_data_tv"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textsize12"
+            android:text="年龄" />
+
+        <TextView
+            android:id="@+id/constellation_data_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/age_data_tv"
+            android:layout_toRightOf="@id/age_data_tv"
+            android:layout_marginLeft="@dimen/margin5"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textsize12"
+            android:text="星座" />
+
+        
+    </RelativeLayout>
+
+     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin5"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/data_data_lv"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin10"
+            android:background="@drawable/info_border"
+            android:divider="#e0e0e0"
+            android:dividerHeight="1px"
+            android:focusable="true"
+            android:footerDividersEnabled="false"
+            android:scrollbars="none" >
+        </ListView>
+    </LinearLayout>
+
+</LinearLayout>

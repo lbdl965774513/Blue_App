@@ -1,0 +1,184 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    <style name="AppTheme" parent="Theme.Sherlock.Light">
+    </style>
+    -->
+
+    <style name="customProgressBar" parent="@android:style/Widget.ProgressBar.Small">
+        <item name="android:layout_width">21dip</item>
+        <item name="android:layout_height">21dip</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="topBar">
+        <item name="android:background">#328AEC</item>
+    </style>
+
+    <style name="topBar_btn">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:layout_marginRight">8dp</item>
+    </style>
+
+    <style name="customEditLabel">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:background">@null</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/customEditLabel</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingLeft">10dp</item>
+    </style>
+
+    <style name="customEditText">
+        <item name="android:background">@null</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="topBar_title">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/top_title_textSize</item>
+    </style>
+	
+    
+    <style name="AnimBottom" parent="@android:style/Animation">
+        <item name="android:windowEnterAnimation">@anim/push_bottom_in</item>
+        <item name="android:windowExitAnimation">@anim/push_bottom_out</item>
+    </style>
+    <!-- 分享popupwindow -->
+    <style name="share_popup_window" parent="android:Theme.Dialog">
+        <!-- 滑入划出动画 -->
+        <item name="android:windowAnimationStyle">@style/AnimBottom</item>
+        <!-- 边框 -->
+        <item name="android:windowFrame">@null</item>
+        <!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsFloating">true</item>
+        <!-- 半透明 -->
+        <item name="android:windowIsTranslucent">true</item>
+        <!-- 无标题 -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 背景透明 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!-- 背景模糊 -->
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+    <!-- 首页 -->
+
+
+    <!-- actionbar标题 -->
+    <style name="title_actionbar">
+        <item name="android:textSize">@dimen/textsize20</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <!-- 标题字体(颜色,大小) -->
+    <style name="title_listview_items_text">
+        <item name="android:textColor">@color/title_listview_items_textcolor</item>
+        <item name="android:textSize">@dimen/textsize18</item>
+    </style>
+
+    <!-- 内容(颜色,大小) -->
+    <style name="content_listview_items_text">
+        <item name="android:textColor">@color/content_listview_items_textcolor</item>
+        <item name="android:textSize">@dimen/textsize16</item>
+    </style>
+
+    <!-- 赞 转发 评论(首页) -->
+	<style name="hudong_list_item_text">
+     <!--    <item name="android:textColor">@color/interaction_listview_items_textcolor</item>
+        <item name="android:textSize">@dimen/textsize14</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:background">@drawable/evaluate_onclick</item>
+        <item name="android:padding">@dimen/padding8</item> -->
+    </style>
+
+    <!-- 赞  转发 评论(新闻详情页面) -->
+    <style name="interaction_news_details">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/textsize16</item>
+        <item name="android:background">@drawable/zan_comment</item>
+        <item name="android:paddingLeft">@dimen/padding15</item>
+    </style>
+
+    <!-- 个人中心 -->
+
+
+    <!-- 我的资料左侧提示字体颜色 -->
+    <style name="textleft_about">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#A5A5A5</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textSize">@dimen/textsize18</item>
+    </style>
+    <!-- 编辑资料左侧提示字体颜色 -->
+    <style name="text_edit_data">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textSize">@dimen/textsize18</item>
+        <item name="android:minHeight">@dimen/height40</item>
+    </style>
+    <!-- 我的资料右侧内容提示字体颜色 -->
+    <style name="textright_about">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textSize">@dimen/textsize18</item>
+        <item name="android:minHeight">@dimen/height40</item>
+    </style>
+    <!-- 关于深蓝 (个人中心中)-->
+    <style name="item_about">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/height40</item>
+        <item name="android:background">@drawable/item_about_bg_head</item>
+        <item name="android:padding">@dimen/padding10</item>
+        <item name="android:minHeight">@dimen/height40</item>
+    </style>
+    
+    <!-- EditText -->
+    <style name="edit_text">
+        <item name="android:background">@drawable/edit_text</item>
+    </style>
+
+
+    <!-- 联系我们 -->
+    <style name="connection_about">
+        <item name="android:background">@drawable/about_shape</item>
+    </style>
+
+    <style name="comBottomBar">
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="whiteBtn">
+        <item name="android:textSize">15sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">10dp</item>
+    </style>
+
+    <style name="activityBg">
+        <item name="android:background">@drawable/activity_common_bg</item>
+    </style>
+
+    <!-- 绿色按钮 -->
+    <style name="greenBtn">
+        <item name="android:background">@color/green</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/textsize20</item>
+        <item name="android:padding">@dimen/padding10</item>
+    </style>
+
+    <style name="rating" parent="@android:style/Widget.RatingBar">
+        <item name="android:minHeight">16dip</item>
+        <item name="android:maxWidth">16dip</item>
+    </style>
+
+</resources>

@@ -1,0 +1,163 @@
+package com.blue.app;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import cn.jpush.android.api.JPushInterface;
+
+import com.blue.R;
+import com.blue.global.Constants;
+import com.blue.lib.volley.RequestQueue;
+import com.blue.lib.volley.toolbox.Volley;
+import com.blue.ui.BaseActivity;
+import com.blue.ui.user.LoginActivity;
+import com.blue.update.VersionDetection;
+import com.blue.util.LoginUtils;
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
+import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.utils.StorageUtils;
+import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
+import com.sina.weibo.sdk.api.share.WeiboShareSDK;
+import com.umeng.analytics.MobclickAgent;
+
+import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
+import android.text.TextUtils;
+import android.util.Log;
+
+/**
+ * @author SLJM
+ * @create 2014-4-15
+ * @desc 自定义Application，提供全局访问
+ */
+public class BlueApplication extends Application {
+	private static String apkurlstring;
+	private static Context context;
+	private static String user_id;
+	public static IWeiboShareAPI mWeiboShareAPI;
+	public static RequestQueue requestQueue;
+	public static final String PHONE_TYPE = android.os.Build.MODEL;
+	private static List<BaseActivity> activityList = new ArrayList<BaseActivity>();
+
+	@Override
+	public void onCreate() {
+		super.onCreate();
+	
+		context = getApplicationContext();
+		JPushInterface.setDebugMode(true); // 设置开启日志,发布时请关闭日志
+		JPushInterface.init(context); // 初始化 JPush
+		MobclickAgent.openActivityDurationTrack(false);
+		initGlobal();//设置版本号
+		requestQueue = Volley.newRequestQueue(context);
+		mWeiboShareAPI = WeiboShareSDK.createWeiboAPI(this, Constants.APP_KEY);
+		mWeiboShareAPI.registerApp(); //  将应用注册到微博客户端
+		initImageLoader(getApplicationContext());
+	}
+	public void initGlobal() {
+		try {
+			// 设置本地版本号
+			VersionDetection.localVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+	public void initImageLoader(Context context) {
+		
+		File cacheDir  = StorageUtils.getOwnCacheDirectory(getApplicationContext(), "/sdcard/SLJM/cache");
+//		.imageScaleType(ImageScaleType imageScaleType)  是设置 图片的缩放方式
+//	     缩放类型mageScaleType:
+//	              EXACTLY :图像将完全按比例缩小的目标大小
+//	              EXACTLY_STRETCHED:图片会缩放到目标大小完全
+//	              IN_SAMPLE_INT:图像将被二次采样的整数倍
+//	              IN_SAMPLE_POWER_OF_2:图片将降低2倍，直到下一减少步骤，使图像更小的目标大小
+//	              NONE:图片不会调整
+		
+//		.displayer(BitmapDisplayer displayer)   是设置 图片的显示方式
+//	      显示方式displayer：
+//	              RoundedBitmapDisplayer（int roundPixels）设置圆角图片
+//	              FakeBitmapDisplayer（）这个类什么都没做
+//	              FadeInBitmapDisplayer（int durationMillis）设置图片渐显的时间
+//	　　　　　　　  SimpleBitmapDisplayer()正常显示一张图片
+	         
+		DisplayImageOptions defaultOption = new DisplayImageOptions.Builder()
+			.cacheInMemory(true).cacheOnDisc(true)
+			.considerExifParams(false)
+			.imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
+			.displayer(new FadeInBitmapDisplayer(300))
+			.resetViewBeforeLoading(true)
+			.showImageForEmptyUri(R.drawable.ic_launcher)
+			.showImageOnFail(R.drawable.ic_launcher).build();
+		
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+			.memoryCacheExtraOptions(480, 800) // max width, max height，即保存的每个缓存文件的最大长宽   我也不懂是什么意思
+			.threadPriority(Thread.NORM_PRIORITY - 2)
+			.denyCacheImageMultipleSizesInMemory()
+			.discCache(new UnlimitedDiscCache(cacheDir))//设置缓存路径
+			.discCacheFileNameGenerator(new HashCodeFileNameGenerator())//将缓存下来的文件以什么方式命名 里面可以调用的方法有  1.new Md5FileNameGenerator() //使用MD5对UIL进行加密命名2.new HashCodeFileNameGenerator()//使用HASHCODE对UIL进行加密命名
+			.defaultDisplayImageOptions(defaultOption)
+			.tasksProcessingOrder(QueueProcessingType.LIFO)
+			.build();//构建完成
+		// Initialize ImageLoader with configuration.
+		ImageLoader.getInstance().init(config);
+	}
+
+	public static void addActivity(BaseActivity activity) {
+		activityList.add(activity);
+	}
+	
+	/**
+	 * 清空所有
+	 */
+	public static void clearActivity() {
+		if (activityList == null || activityList.size() == 0) return;
+		for (BaseActivity activity : activityList) {
+			if (activity != null) activity.finish();
+		}
+	}
+	/**检查是否登录*/
+	public static Boolean isLogin(Context context) {
+		String user_id = LoginUtils.getLoginUserid(context);
+		Log.i("BlueApplication", "user_id = " + user_id);
+		Boolean isLogin = !TextUtils.isEmpty(user_id);
+		//没有登录时执行
+		if (!isLogin) {
+			BlueException.toast(BlueException.PLEASE_LOGIN);
+			Intent intent = new Intent(context, LoginActivity.class);
+			context.startActivity(intent);
+//			activity.finish();
+		}
+		return isLogin;
+	}
+
+	public static String getUser_id() {
+		return user_id;
+	}
+
+	public static void setUser_id(String user_id) {
+		BlueApplication.user_id = user_id;
+	}
+
+	public static Context getContext() {
+		return context;
+	}
+
+	public static void setContext(Context context) {
+		BlueApplication.context = context;
+	}
+	public static String getApkurlstring() {
+		return apkurlstring;
+	}
+	public static void setApkurlstring(String apkurlstring) {
+		BlueApplication.apkurlstring = apkurlstring;
+	}
+	
+}
+

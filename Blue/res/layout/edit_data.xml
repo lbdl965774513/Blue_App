@@ -1,0 +1,63 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditDataActivity" >
+
+    <RelativeLayout
+        android:id="@+id/ic_edit_rl"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin40"
+        android:layout_margin="@dimen/margin10"
+        android:background="@drawable/list_item_first_normal"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/padding10" >
+
+        <TextView
+            style="@style/text_edit_data"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:singleLine="true"
+            android:text="@string/user_ic" />
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/margin20"
+            android:src="@drawable/right_arrow" />
+
+        <ImageView
+            android:id="@+id/ic_edit_data_iv"
+            android:layout_width="@dimen/width40"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/imageView1"/>
+    </RelativeLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ic_edit_rl"
+        android:layout_marginTop="@dimen/margin5"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/edit_data_lv"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin10"
+            android:background="@drawable/info_border"
+            android:divider="#e0e0e0"
+            android:dividerHeight="1px"
+            android:focusable="true"
+            android:footerDividersEnabled="false"
+            android:scrollbars="none" >
+        </ListView>
+    </LinearLayout>
+
+</RelativeLayout>

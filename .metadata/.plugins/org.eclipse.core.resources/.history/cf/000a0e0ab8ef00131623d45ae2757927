@@ -1,0 +1,449 @@
+package com.blue.adapter;
+
+import java.util.ArrayList;
+import org.json.JSONObject;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.text.SpannableString;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.blue.R;
+import com.blue.app.BlueApplication;
+import com.blue.app.BlueException;
+import com.blue.bean.ForwardNote;
+import com.blue.bean.Note;
+import com.blue.global.Evaluate;
+import com.blue.lib.view.FlowLayout;
+import com.blue.lib.volley.Request.Method;
+import com.blue.lib.volley.RequestQueue;
+import com.blue.lib.volley.Response.Listener;
+import com.blue.lib.volley.toolbox.JsonObjectRequest;
+import com.blue.ui.layout.SharePopupWindow;
+import com.blue.ui.news.NewsDetailsActivity;
+import com.blue.ui.user.UserCenterActivity;
+import com.blue.util.DealText;
+import com.blue.util.HttpUtils;
+import com.blue.util.LoginUtils;
+import com.blue.util.SmileyParser;
+import com.blue.util.SubmitPara;
+import com.blue.util.TimeUtil;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
+
+/**
+ * @author SLJM
+ * @create 2014-1-23
+ * @version 1.0
+ * @desc 大咖秀列表 我的收藏适配器
+ */
+
+public class KaXiuListAdapter extends BaseAdapter{
+
+	private static Context context;
+	private ArrayList<Note> note_array;
+	Note item;
+	private Note note_item;
+	private ViewHolder holder;
+	private IWeiboShareAPI mWeiboShareAPI;
+	// 赞个数
+	int zan_count;
+	// 评论个数
+	int comment_count;
+	// 标识(是否为转发 1:原帖 5:转发)
+	String forward_type;
+	// 标识 ( 0: 转发 1: 收藏 2:删除)
+	/**0:大咖秀列表  1: 我的收藏*/
+	private int index;
+	Evaluate evaluate;
+	SmileyParser parser;
+	private static final String TAG = "KaXiuListAdapter";
+	private ImageLoader imageLoader;
+	private RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(140, 100);
+
+	public KaXiuListAdapter(Context context, ArrayList<Note> note_array, int index) {
+		this.context = context;
+		this.note_array = note_array;
+		this.index = index;
+		
+		imageLoader = ImageLoader.getInstance();
+		mWeiboShareAPI = BlueApplication.mWeiboShareAPI;
+	}
+	public KaXiuListAdapter(){
+		super();
+		mWeiboShareAPI = BlueApplication.mWeiboShareAPI;
+	}
+
+	private static class ViewHolder {
+
+		// listview items文章头像
+		ImageView ic_iv, more_iv;
+		FlowLayout img_fl;
+		TextView name_tv,phoneType_tv, ctime_tv, content_tv;
+		// 转发的布局
+		RelativeLayout forward_note_layout;
+		// 转发控件
+		TextView content_forward_tv;
+		FlowLayout img_forward_fl;
+		TextView zan_tv,forward_tv,share_tv,comment_tv;
+		ArrayList<ImageView> photo_list;
+		ArrayList<ImageView> photo_re_list;
+		
+		public ViewHolder(){
+			photo_list = new ArrayList<ImageView>(5);
+			photo_re_list = new ArrayList<ImageView>(5);
+			
+			for (int i = 0; i < 5; i++) {
+				ImageView photo_iv = new ImageView(context);
+				photo_list.add(photo_iv);
+			}
+			photo_list.trimToSize();
+			
+			for (int i = 0; i < 5; i++) {
+				ImageView photo_re_iv = new ImageView(context);
+				photo_re_list.add(photo_re_iv);
+			}
+			photo_re_list.trimToSize();
+		}
+	}
+
+	@Override
+	public int getCount() {
+		return note_array == null ? 0 : note_array.size();
+
+	}
+
+	@Override
+	public Note getItem(int position) {
+		
+		if (index == 0) {
+			return (note_array == null || position > note_array.size()) ? null: note_array.get(position);
+			
+		}else if(index ==1){
+			return (note_array == null || position > note_array.size()) ? null: note_array.get(position).article_info;
+		}else{
+			return null;
+		}
+
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return 0;
+
+	}
+	
+
+	/** 添加文章列表信息 */
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		
+		note_item = getItem(position);
+		
+		if (note_item == null) {
+			return convertView;
+		}
+
+		if (convertView == null) {
+
+			holder = new ViewHolder();
+			convertView = LayoutInflater.from(context).inflate(R.layout.kaxiu_list_item, null);
+			
+			initView(convertView);
+			
+			convertView.setTag(holder);
+
+		} else {
+			holder = (ViewHolder) convertView.getTag();
+		}
+
+		addArticleList();
+
+		ViewClickListener listener1 = new ViewClickListener(note_item);
+		ViewClickListener listener2 = new ViewClickListener(note_item,note_item.user_id);
+		
+		holder.ic_iv.setOnClickListener(listener2);
+		holder.name_tv.setOnClickListener(listener2);
+		holder.zan_tv.setOnClickListener(listener1);
+		holder.forward_tv.setOnClickListener(listener1);
+		holder.comment_tv.setOnClickListener(listener1);
+		holder.share_tv.setOnClickListener(listener1);
+		holder.forward_note_layout.setOnClickListener(listener1);
+		holder.more_iv.setOnClickListener(listener1);
+		
+		return convertView;
+
+	}
+	
+	private void initView(View convertView) {
+		View view = convertView;
+		
+		holder.ic_iv = (ImageView) view.findViewById(R.id.ic_xaliu_item_iv);
+		holder.more_iv = (ImageView) view.findViewById(R.id.more_xaliu_item_iv);
+		holder.name_tv = (TextView) view.findViewById(R.id.name_xaliu_item_tv);
+		holder.ctime_tv = (TextView) view.findViewById(R.id.ctime_xaliu_item_tv);
+		holder.content_tv = (TextView) view.findViewById(R.id.content_kaxiu_item_tv);
+		holder.phoneType_tv = (TextView) view.findViewById(R.id.phone_type_xaliu_item_tv);
+		//赞,转发,评论,分享
+		holder.zan_tv = (TextView) view.findViewById(R.id.zan_kaxiu_list_item_tv);
+		holder.forward_tv = (TextView) view.findViewById(R.id.forward_kaxiu_list_item_tv);
+		holder.comment_tv = (TextView) view.findViewById(R.id.comment_kaxiu_list_item_tv);
+		holder.share_tv = (TextView) view.findViewById(R.id.share_kaxiu_list_item_tv);
+		holder.img_fl = (FlowLayout) view.findViewById(R.id.img_xaliu_item_fl);
+		// 转发部分
+		holder.content_forward_tv = (TextView) view.findViewById(R.id.content_forward_note_tv);
+		holder.img_forward_fl = (FlowLayout) view.findViewById(R.id.img_forward_note_fl);
+		holder.forward_note_layout = (RelativeLayout) view.findViewById(R.id.forward_kaxiu_list_item_layout);
+	}
+
+	private void addArticleList(){
+		parser = new SmileyParser(context);
+		// 本帖子为转发帖子
+		if (note_item.type.equals("5")) {
+			
+			holder.forward_note_layout.setVisibility(View.VISIBLE);
+			ForwardNote forwardNote = note_item.forwardNote;
+			
+			dealForward(forwardNote);
+			
+		} else{
+			holder.forward_note_layout.setVisibility(View.GONE);
+		}
+
+		zan_count = Integer.parseInt(note_item.like_count);
+
+		holder.ic_iv.setLayoutParams(param);
+		holder.ic_iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
+		imageLoader.displayImage(note_item.user_icon, holder.ic_iv);
+		holder.name_tv.setText(note_item.user_name);
+		
+		DealText.textViewSpan(context, holder.content_tv, parser.replace(note_item.content),"",  false);
+		
+		holder.ctime_tv.setText(TimeUtil.getStandardDate(note_item.ctime));
+		holder.phoneType_tv.setText("来自:"+ note_item.phone_type);
+		holder.zan_tv.setText(note_item.like_count);
+		holder.comment_tv.setText(note_item.comment_count);
+		holder.forward_tv.setText(note_item.re_count);
+		//当有图片的时候执行
+		if (!note_item.img.equals("")) {
+			holder.img_fl.setVisibility(View.VISIBLE);
+			holder.img_fl.removeAllViews();
+			ImageView imageView  = holder.photo_list.get(0);
+			imageView.setLayoutParams(new LayoutParams(150, 150));
+			holder.img_fl.addView(imageView);
+			imageLoader.displayImage(note_item.img,imageView);
+		}else{
+			holder.img_fl.setVisibility(View.GONE);
+		}
+	}
+	private void dealForward(ForwardNote forwardNote) {
+		
+		if (forwardNote == null) {
+			return;
+		}
+		
+		ForwardNote forward = forwardNote;
+		String forwardText = "@" + forward.user_name + " : " + forward.content;
+		SpannableString spanableInfo = new SpannableString(forwardText);
+		DealText.textViewSpan(context, holder.content_forward_tv, spanableInfo,forward.user_id,true);
+		//当有图片的时候执行
+		if (!forwardNote.img.equals("")) {
+			holder.img_forward_fl.setVisibility(View.VISIBLE);
+			ImageView imageView = holder.photo_re_list.get(0);
+			holder.img_forward_fl.removeView(imageView);
+			imageView.setLayoutParams(new LayoutParams(150, 150));
+			holder.img_forward_fl.addView(imageView);
+			imageLoader.displayImage(forward.img,imageView);
+		}else{
+			holder.img_fl.setVisibility(View.GONE);
+		}
+	}
+	public ArrayList<Note> getAdapterData() {
+		if (note_array == null) {
+			note_array = new ArrayList<Note>();
+		}
+		return note_array;
+	}
+
+	/** 添加第一页的数据 */
+	public void addFirstPageData(ArrayList<Note> array) {
+		if (array == null || array.isEmpty()) {
+			return;
+		}
+		getAdapterData();
+		note_array.clear();
+		note_array.addAll(array);
+		// http://www.cnblogs.com/sipher/articles/2429812.html
+		note_array.trimToSize();
+		notifyDataSetChanged();
+	}
+
+	/** 添加其他页的数据 */
+	public void addOtherPageData(ArrayList<Note> array) {
+		if (array == null || array.isEmpty()) {
+			return;
+		}
+
+		getAdapterData();
+		note_array.addAll(array);
+		note_array.trimToSize();
+		notifyDataSetChanged();
+
+	}
+	
+	class ViewClickListener implements OnClickListener{
+		
+		
+		private Note note_item; 
+		private String user_id;
+		
+		public ViewClickListener(Note item){
+			note_item = item;
+		}
+		public ViewClickListener(Note item,String user_id){
+			note_item = item;
+			this.user_id = user_id;
+			
+		}
+		
+		@Override
+		public void onClick(View view) {
+			
+			evaluate = new Evaluate(context, note_item);
+			
+			switch (view.getId()) {
+			
+			case R.id.ic_xaliu_item_iv:
+			case R.id.name_xaliu_item_tv:
+				comeToCenter();
+				break;
+			//赞
+			case R.id.zan_kaxiu_list_item_tv:
+				evaluate.zan();
+				break;
+			//转发
+			case R.id.forward_kaxiu_list_item_tv:
+				evaluate.forward();
+				break;
+				
+			//评论
+			case R.id.comment_kaxiu_list_item_tv:
+				evaluate.comment();
+				break;
+			//分享
+			case R.id.share_kaxiu_list_item_tv:
+				new SharePopupWindow(context,note_item.content,mWeiboShareAPI).sharePop();
+				break;
+			//更多
+			case R.id.more_xaliu_item_iv:
+				moreDialog();
+				break;
+			//原帖的布局
+			case R.id.forward_kaxiu_list_item_layout:
+				getForwardNote();
+				break;
+
+			default:
+				break;
+			}
+		}
+		private void getForwardNote() {
+			
+			if (note_item.type.equals("5")) {
+				Intent intent = new Intent(context,NewsDetailsActivity.class);
+				intent.putExtra("index", 1);
+				intent.putExtra("article_id", note_item.forwardNote.article_id);
+				
+				context.startActivity(intent);
+			}
+		}
+		private void comeToCenter() {
+			Intent intent = new Intent(context,UserCenterActivity.class);
+			intent.putExtra("user_id", user_id);
+			context.startActivity(intent);
+		}
+		
+		private void moreDialog(){
+//			item = note_item;
+			final String[] more_text = context.getResources().getStringArray(R.array.more_text);
+			
+			new AlertDialog.Builder(context).setItems(more_text, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					moreOperation(which);
+					
+				}
+			}).show();
+		}
+
+		protected void moreOperation(int which) {
+
+			switch (which) {
+			//收藏
+			case 0:
+				evaluate.CollectionNote();
+				break;
+			//加好友
+			case 1:
+				
+				break;
+			//删除
+			case 2:
+				deleteNote();
+				break;
+			default:
+				break;
+			}
+		}
+		
+		/**删除*/
+		private void deleteNote(){
+			String user_id;
+			
+			if (!BlueApplication.isLogin(context)) {
+				return;
+			}else{
+				user_id = LoginUtils.getLoginUserid(context);
+			}
+			
+			if (!note_item.user_id.equals(user_id)) {
+//				BlueException.toast(R.string.delete_error);
+				Toast.makeText(context, R.string.delete_error, Toast.LENGTH_SHORT).show();
+				return;
+			}
+			RequestQueue requestQueue = BlueApplication.requestQueue;
+			
+			JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Method.POST,HttpUtils.initArticleURL("article_del"),
+					SubmitPara.deleteNote(note_item.user_id, note_item.id),new Listener<JSONObject>() {
+				@Override
+				public void onResponse(JSONObject response) {
+					Log.i(TAG, "delete = "+response );
+					if (response.optString("code").equals("1")) {
+						BlueException.toast("删除成功");
+						notifyDataSetChanged();
+					}
+				}
+			}, null);
+			
+			requestQueue.add(jsonObjectRequest);
+			requestQueue.start();
+			
+		}
+		
+	}
+
+
+}

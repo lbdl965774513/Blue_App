@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <include android:id="@+id/actionbar_layout"
+        layout="@layout/actionbar_main"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"/> 
+
+    <com.blue.lib.view.PagerSlidingTabStrip
+        android:id="@+id/about_psts"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/margin30"
+  		android:layout_below="@id/actionbar_layout"
+        android:minHeight="@dimen/margin30"
+         >
+    </com.blue.lib.view.PagerSlidingTabStrip>
+    
+    <android.support.v4.view.ViewPager
+        android:id="@+id/about_vp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/about_psts">
+    </android.support.v4.view.ViewPager>
+
+</RelativeLayout>

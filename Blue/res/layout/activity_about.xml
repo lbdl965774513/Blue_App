@@ -1,0 +1,74 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/padding10"
+    android:orientation="vertical"
+    tools:context=".AboutActivity" >
+	
+    <RelativeLayout 
+        android:id="@+id/version_about_rl"
+        style="@style/item_about">
+        
+        <TextView 
+            style="@style/textleft_about"
+            android:layout_alignParentLeft="true"
+            android:text="@string/version_text"/>
+        
+        <TextView 
+            android:id="@+id/version_about_tv"
+            style="@style/textleft_about"
+            android:layout_alignParentRight="true"
+            android:text="已是最新版本"/>
+        
+    </RelativeLayout>
+    <RelativeLayout 
+        android:id="@+id/function_about_rl"
+        style="@style/item_about">
+        
+        <TextView 
+            style="@style/textleft_about"
+            android:layout_alignParentLeft="true"
+            android:text="@string/function_text"/>
+        
+      	<ImageView 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/right_arrow"/>
+        
+    </RelativeLayout>
+    <RelativeLayout 
+        android:id="@+id/inform_about_rl"
+        style="@style/item_about">
+        
+        <TextView 
+            style="@style/textleft_about"
+            android:layout_alignParentLeft="true"
+            android:text="@string/inform_text"/>
+        
+        <ImageView 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/right_arrow"/>
+        
+    </RelativeLayout>
+    <RelativeLayout 
+        android:id="@+id/help_about_rl"
+        style="@style/item_about">
+        
+        <TextView 
+            style="@style/textleft_about"
+            android:layout_alignParentLeft="true"
+            android:text="@string/help_text"/>
+        
+       <ImageView 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/right_arrow"/>
+        
+    </RelativeLayout>
+
+</LinearLayout>

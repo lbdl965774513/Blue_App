@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:paddingTop="@dimen/padding6">
+
+   <!--  <ImageView
+        android:id="@+id/img_comment_items_iv"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:padding="@dimen/padding10"
+        android:src="@drawable/ic_launcher" /> -->
+    
+    <com.blue.lib.view.RoundImageView 
+        android:id="@+id/img_comment_items_iv"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:padding="@dimen/padding10"
+        android:src="@drawable/ic_launcher" /> 
+
+    <TextView
+        android:id="@+id/uname_comment_items_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/img_comment_items_iv"
+        android:layout_marginLeft="@dimen/margin15"
+        android:layout_toRightOf="@id/img_comment_items_iv"
+        android:text="uname" />
+
+    <TextView
+        android:id="@+id/ctime_comment_items_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/img_comment_items_iv"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/margin15"
+        android:textColor="@color/content_listview_items_textcolor"
+        android:text="ctime" />
+
+    <TextView
+        android:id="@+id/content_comment_items_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/uname_comment_items_tv"
+        android:layout_below="@+id/uname_comment_items_tv"
+        android:layout_marginTop="@dimen/margin5"
+        android:textSize="@dimen/textsize16"
+        android:text="content" />
+
+</RelativeLayout>

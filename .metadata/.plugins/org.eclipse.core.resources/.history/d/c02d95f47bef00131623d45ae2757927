@@ -1,0 +1,185 @@
+package com.blue.ui.user.about;
+
+import java.io.File;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.WindowManager;
+import android.widget.RelativeLayout;
+
+import com.blue.R;
+import com.blue.app.BlueApplication;
+import com.blue.bean.Version;
+import com.blue.conninternet.VersionRequest;
+import com.blue.lib.volley.Request.Method;
+import com.blue.lib.volley.RequestQueue;
+import com.blue.lib.volley.Response.Listener;
+import com.blue.ui.home.MainActivity;
+import com.blue.update.VersionDetection;
+import com.blue.update.updateService;
+import com.blue.util.HttpUtils;
+
+/**
+ * @author SLJM
+ * @create 2014-5-24
+ * @desc 关于深蓝Activity
+ *
+ */
+public class AboutActivity extends Activity implements OnClickListener{
+	
+	private RelativeLayout version_rl;
+	private RelativeLayout function_rl;
+	private RelativeLayout inform_rl;
+	private RelativeLayout help_rl;
+	
+	private RequestQueue requestQueue;
+	// 版本信息
+	public int localVersion = 0;
+	public int serverVersion = 0;
+	private String apkurlstring;
+	private String versionString;
+	private static final String TAG = "AboutActivity";
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_about);
+		
+		initView();
+	}
+
+	private void initView() {
+		
+		requestQueue = BlueApplication.requestQueue;
+		
+		version_rl = (RelativeLayout)findViewById(R.id.version_about_rl);
+		function_rl = (RelativeLayout)findViewById(R.id.function_about_rl);
+		inform_rl = (RelativeLayout)findViewById(R.id.inform_about_rl);
+		help_rl = (RelativeLayout)findViewById(R.id.help_about_rl);
+		
+		version_rl.setOnClickListener(this);
+		function_rl.setOnClickListener(this);
+		inform_rl.setOnClickListener(this);
+		help_rl.setOnClickListener(this);
+	}
+	
+	/** 获取版本信息 */
+	private void getVersion() {
+
+		VersionRequest request = new VersionRequest(Method.POST, HttpUtils.initArticleURL("apk_url"),null, 
+				new Listener<Version>() {
+			
+					private static final String TAG = "NewsDetailsActivity";
+					public void onResponse(Version response) {
+						Log.i(TAG, "获取版本信息"+response.VersionString);
+						if (response != null) {
+							initDetailsData(response);
+						}
+					}
+				}, null);
+
+		requestQueue.add(request);
+		requestQueue.start();
+	}
+	
+	/**初始化文章详情部分*/
+	private void initDetailsData(Version response) {
+		Version version = response;
+		versionString = version.VersionString;
+		apkurlstring = version.ApkUrlString;
+		Log.i(TAG, "获取版本信息"+versionString+"    获取apk下载地址："+apkurlstring);
+		}
+	
+	/**
+	 * 获取apk下载地址
+	 * @return
+	 */
+	public static String getapkurlstring() {
+		String ss =apkurlstring;
+		return ss;
+	}
+
+	// 获取服务器程序的版本号
+	public static String check(Context context) {
+		System.out.println(" 获取服务器程序的版本号、versionString：    "+versionString);
+		return versionString;
+	}
+
+	@Override
+	public void onClick(View v) {
+		
+		Intent intent = new Intent();
+		
+		switch (v.getId()) {
+		case R.id.version_about_rl:
+			//此方法暂时 写在这。
+			VersionDetection.serverVersion = Integer.parseInt(VersionDetection.check(getApplicationContext()));
+			System.out.println("本地版本号：VersionDetection.localVersion/更新版本号：VersionDetection.serverVersion");
+			if (VersionDetection.localVersion < VersionDetection.serverVersion) {
+			checkVersion();
+			}
+			break;
+		case R.id.function_about_rl:
+			
+			break;
+		case R.id.inform_about_rl:
+			intent.setClass(this, InformationActivity.class);
+			startActivity(intent);
+			break;
+		case R.id.help_about_rl:
+			
+			break;
+
+		default:
+			break;
+		}
+
+		
+	
+		
+	}
+	public void checkVersion() {
+		
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("软件升级").setMessage("发现新版本，建议立即更新使用").setPositiveButton("更新",
+						new DialogInterface.OnClickListener() {
+							private String url;
+
+							@Override
+							public void onClick(DialogInterface dialog,int which) {
+								// 普通模式
+								System.out.println("====  "+VersionDetection.getapkurlstring());
+								WindowManager.LayoutParams params = getWindow().getAttributes();
+								params.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
+								getWindow().setAttributes(params);
+								getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+								Intent updateIntent = new Intent(AboutActivity.this,updateService.class);
+								updateIntent.putExtra("titleId",R.string.blueapp_apkname);
+								updateIntent.putExtra("url",VersionDetection.getapkurlstring() );
+								startService(updateIntent);
+								
+							}
+						})
+				.setNegativeButton("取消",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								dialog.dismiss();
+							}
+						});
+		alert.create().show();
+		File updateFile = new File( R.string.blueapp_apkname + ".apk");
+		if (updateFile.exists()) {
+			// 当不需要的时候，清除之前的下载文件，避免浪费用户空间
+			updateFile.delete();
+		}
+		}
+}

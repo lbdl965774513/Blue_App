@@ -1,0 +1,12 @@
+<resources>
+
+    <!--
+         Customize dimensions originally defined in res/values/dimens.xml (such as
+         screen margins) for sw600dp devices (e.g. 7" tablets) here.
+    -->
+  <!-- hdpi -->
+    <integer-array name="bits">
+        <item>28</item>
+        <item>28</item>
+    </integer-array>
+</resources>

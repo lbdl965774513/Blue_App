@@ -1,0 +1,108 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".UserSpaceActivity" >
+    
+    <include layout="@layout/actionbar_main"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"/> 
+
+    <RelativeLayout
+        android:id="@+id/top_center_fl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:background="@drawable/user_center_bg" >
+
+    <!--     <ImageView
+            android:id="@+id/ic_user_center_iv"
+            android:layout_width="@dimen/width60"
+            android:layout_height="@dimen/width60"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="@dimen/margin10" /> -->
+        
+        <com.blue.lib.view.RoundImageView 
+            android:id="@+id/ic_user_center_iv"
+            android:layout_width="@dimen/width60"
+            android:layout_height="@dimen/height60"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="@dimen/margin10"/>
+
+        <TextView
+            android:id="@+id/name_user_center_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/textsize20"
+            android:textColor="@color/white"
+            android:layout_marginLeft="@dimen/margin10"
+            android:layout_alignTop="@id/ic_user_center_iv"
+            android:layout_toRightOf="@id/ic_user_center_iv"/>
+
+        <TextView
+            android:id="@+id/edit_user_center_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/name_user_center_tv"
+            android:layout_below="@id/name_user_center_tv"
+            android:layout_marginTop="@dimen/margin5"
+            android:drawableLeft="@drawable/user_center_edit"
+            android:textColor="@color/white"
+            android:text="@string/edit_data" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/user_info_space_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin5"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/user_center_lv"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin10"
+            android:background="@drawable/info_border"
+            android:divider="#e0e0e0"
+            android:dividerHeight="1px"
+            android:focusable="true"
+            android:footerDividersEnabled="false"
+            android:scrollbars="none" >
+        </ListView>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/about_rl"
+        style="@style/item_about"
+        android:orientation="horizontal"
+        android:layout_margin="@dimen/margin10" >
+
+        <TextView
+            style="@style/textleft_about"
+            android:layout_gravity="center_vertical"
+            android:singleLine="true"
+            android:text="@string/about" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/margin10"
+            android:src="@drawable/right_arrow" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/exit_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin10"
+        android:background="@color/yellow"
+        android:gravity="center"
+        android:text="@string/exit_login"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textsize20" />
+
+</LinearLayout>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/industryLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+
+	<com.blue.ui.layout.ActionBarLayout
+	    android:id="@+id/actionbar_layout"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"/> 
+	    
+    
+    <com.blue.lib.ptr.PullToRefreshListView
+        xmlns:ptr="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/home_main_lv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:descendantFocusability="blocksDescendants"
+        ptr:ptrAnimationStyle="flip"
+        ptr:ptrMode="pullFromStart" >
+    </com.blue.lib.ptr.PullToRefreshListView>
+
+</LinearLayout>

@@ -1,0 +1,108 @@
+<resources>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <!-- 顶部按钮栏 -->
+    <dimen name="topBar_height">45dp</dimen>
+    <dimen name="topBar_btn_height">30dp</dimen>
+    <dimen name="topBar_btn_width">50dp</dimen>
+    <dimen name="filterBar_height">38dp</dimen>
+    <dimen name="top_title_textSize">20sp</dimen>
+
+    <!-- 字体大小 -->
+    <dimen name="textsize8">8dp</dimen>
+    <dimen name="textsize10">10dp</dimen>
+    <dimen name="textsize12">12dp</dimen>
+    <dimen name="textsize13">13dp</dimen>
+    <dimen name="textsize14">14dp</dimen>
+    <dimen name="textsize15">15dp</dimen>
+    <dimen name="textsize16">16dp</dimen>
+    <dimen name="textsize18">18dp</dimen>
+    <dimen name="textsize20">20dp</dimen>
+    <dimen name="textsize22">22dp</dimen>
+    <dimen name="textsize26">26dp</dimen>
+    
+    <!-- padding大小 -->
+    <dimen name="padding1">1dp</dimen>
+    <dimen name="padding2">2dp</dimen>
+    <dimen name="padding3">3dp</dimen>
+    <dimen name="padding4">4dp</dimen>
+    <dimen name="padding5">5dp</dimen>
+    <dimen name="padding6">6dp</dimen>
+    <dimen name="padding7">7dp</dimen>
+    <dimen name="padding8">8dp</dimen>
+    <dimen name="padding10">10dp</dimen>
+    <dimen name="padding15">15dp</dimen>
+    <dimen name="padding20">20dp</dimen>
+    <dimen name="padding25">25dp</dimen>
+    <dimen name="padding30">30dp</dimen>
+
+    <!-- margin 大小 -->
+    <dimen name="margin0.5">0.5dp</dimen>
+    <dimen name="margin1">1dp</dimen>
+    <dimen name="margin2">2dp</dimen>
+    <dimen name="margin4">4dp</dimen>
+    <dimen name="margin5">5dp</dimen>
+    <dimen name="margin7">7dp</dimen>
+    <dimen name="margin8">8dp</dimen>
+    <dimen name="margin10">10dp</dimen>
+    <dimen name="margin12">12dp</dimen>
+    <dimen name="margin14">14dp</dimen>
+    <dimen name="margin15">15dp</dimen>
+    <dimen name="margin18">18dp</dimen>
+    <dimen name="margin20">20dp</dimen>
+    <dimen name="margin25">25dp</dimen>
+    <dimen name="margin30">30dp</dimen>
+    <dimen name="margin35">35dp</dimen>
+    <dimen name="margin40">40dp</dimen>
+    <dimen name="margin50">50dp</dimen>
+    <dimen name="margin60">60dp</dimen>
+    <dimen name="margin70">70dp</dimen>
+    <dimen name="margin80">80dp</dimen>
+    <dimen name="margin100">100dp</dimen>
+    <dimen name="margin180">180dp</dimen>
+    <!-- height大小 -->
+    <dimen name="height30">30dp</dimen>
+    <dimen name="height35">35dp</dimen>
+    <dimen name="height40">40dp</dimen>
+    <dimen name="height45">45dp</dimen>
+    <dimen name="height50">50dp</dimen>
+    <dimen name="height60">60dp</dimen>
+    <dimen name="height70">70dp</dimen>
+    <dimen name="height80">80dp</dimen>
+    <dimen name="height100">100dp</dimen>
+    <dimen name="height180">180dp</dimen>
+    <dimen name="height100">100dp</dimen>
+    <dimen name="height40">40dp</dimen>
+    <dimen name="height50">50dp</dimen>
+    <dimen name="height60">60dp</dimen>
+    <dimen name="height100">100dp</dimen>
+    <dimen name="height300">300dp</dimen>
+    <dimen name="height350">350dp</dimen>
+    <!-- width 大小 -->
+    <dimen name="width0.5">0.5dp</dimen>
+    <dimen name="width1">1dp</dimen>
+    <dimen name="width2">2dp</dimen>
+    <dimen name="width4">4dp</dimen>
+    <dimen name="width5">5dp</dimen>
+    <dimen name="width7">7dp</dimen>
+    <dimen name="width8">8dp</dimen>
+    <dimen name="width10">10dp</dimen>
+    <dimen name="width12">12dp</dimen>
+    <dimen name="width14">14dp</dimen>
+    <dimen name="width15">15dp</dimen>
+    <dimen name="width18">18dp</dimen>
+    <dimen name="width20">20dp</dimen>
+    <dimen name="width25">25dp</dimen>
+    <dimen name="width30">30dp</dimen>
+    <dimen name="width35">35dp</dimen>
+    <dimen name="width40">40dp</dimen>
+    <dimen name="width50">50dp</dimen>
+    <dimen name="width60">60dp</dimen>
+    <dimen name="width70">70dp</dimen>
+    <dimen name="width80">80dp</dimen>
+    <dimen name="width100">100dp</dimen>
+    <dimen name="width180">180dp</dimen>
+
+</resources>

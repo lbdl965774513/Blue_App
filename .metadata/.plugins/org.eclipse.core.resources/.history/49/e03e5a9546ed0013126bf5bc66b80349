@@ -1,0 +1,147 @@
+package com.blue.adapter;
+
+import java.util.ArrayList;
+import com.blue.R;
+import com.blue.bean.Note;
+import com.blue.util.DealText;
+import com.blue.util.SmileyParser;
+import com.blue.util.TimeUtil;
+import com.nostra13.universalimageloader.core.ImageLoader;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+/**
+ * @author SLJM
+ * @create 2014-3-31
+ * @desc 新闻评论,行业资讯评论,大咖秀评论列表适配器
+ *
+ */
+public class NewsCommentAdapter extends BaseAdapter{
+	
+	private ArrayList<Note> comment_array;
+	private ViewHolder holder;
+	private Context context;
+	private ImageLoader imageLoader;
+	private Note note_item; 
+	SmileyParser parser;
+	private  RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(140,130);
+
+	public NewsCommentAdapter(Context context,ArrayList<Note> comment_array){
+		
+		this.comment_array = comment_array;
+		this.context = context;
+		
+		imageLoader = ImageLoader.getInstance();
+	}
+	
+	private static class ViewHolder{
+		ImageView image;
+		TextView uname, ctime, content;
+	}
+	
+	@Override
+	public int getCount() {
+		return comment_array.size();
+	}
+
+	@Override
+	public Note getItem(int position) {
+		
+		return (comment_array == null || position > comment_array.size()) ? null : comment_array.get(position);
+	
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
+	
+	@Override
+	public boolean isEnabled(int position) {
+		
+		return position == 0 ? false : true;
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		note_item = getItem(position);
+		if (note_item == null) {
+			return convertView;
+		}
+		
+		if(convertView == null){
+			
+			holder = new ViewHolder();
+			convertView = LayoutInflater.from(context).inflate(R.layout.comment_list_items, null);
+			holder.image = (ImageView)convertView.findViewById(R.id.img_comment_items_iv);
+			holder.uname = (TextView)convertView.findViewById(R.id.uname_comment_items_tv);
+			holder.ctime = (TextView)convertView.findViewById(R.id.ctime_comment_items_tv);
+			holder.content = (TextView)convertView.findViewById(R.id.content_comment_items_tv);
+			
+			convertView.setTag(holder);
+		}else{
+			holder = (ViewHolder) convertView.getTag();
+		}
+		
+		addCommentList();
+		
+		return convertView;
+	}
+	
+	/** 添加文章评论列表信息 */
+	private void addCommentList() {
+		
+		holder.image.setLayoutParams(param);
+		holder.image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+		imageLoader.displayImage(note_item.user_icon, holder.image);
+		holder.uname.setText(note_item.user_name);
+		holder.ctime.setText(TimeUtil.getStandardDate(note_item.ctime));
+		
+		parser = new SmileyParser(context);
+		DealText.textViewSpan(context,holder.content, parser.replace(note_item.content),"",  false);
+//		holder.content.setText(note_item.content);
+	}
+	
+	public ArrayList<Note> getAdapterData() {
+		if (comment_array == null) {
+			comment_array = new ArrayList<Note>();
+		}
+		return comment_array;
+	}
+	
+	/**添加第一页的数据*/
+	public void addFirstPageData(ArrayList<Note> array) {
+		if (array == null || array.isEmpty()) {
+			return;
+		}
+		getAdapterData();
+		comment_array.clear();
+		comment_array.addAll(array);
+		//http://www.cnblogs.com/sipher/articles/2429812.html
+		comment_array.trimToSize();
+		notifyDataSetChanged();
+	}
+	
+	/**添加其他页的数据*/
+	public void addOtherPageData(ArrayList<Note> array) {
+		if (array == null || array.isEmpty()) {
+			return;
+		}
+		
+		getAdapterData();
+		comment_array.addAll(array);
+		comment_array.trimToSize();
+		notifyDataSetChanged();
+		
+	}
+
+}
+
+

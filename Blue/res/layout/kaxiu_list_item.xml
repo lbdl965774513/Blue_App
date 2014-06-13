@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants"
+    android:background="@drawable/layout_onclick"
+    android:padding="@dimen/padding6"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+       <!--  <ImageView
+            android:id="@+id/ic_xaliu_item_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin10"
+            android:src="@drawable/ic_launcher" /> -->
+        
+        <com.blue.lib.view.RoundImageView 
+            android:id="@+id/ic_xaliu_item_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin10"/>
+
+        <TextView
+            android:id="@+id/name_xaliu_item_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/ic_xaliu_item_iv"
+            android:layout_toRightOf="@id/ic_xaliu_item_iv"
+            android:text="昵称"
+            android:textSize="@dimen/textsize18" />
+
+        <TextView
+            android:id="@+id/ctime_xaliu_item_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/name_xaliu_item_tv"
+            android:layout_toLeftOf="@+id/more_xaliu_item_iv"
+            android:layout_marginRight="@dimen/margin5"
+            android:text="时间"
+            android:textColor="@color/content_listview_items_textcolor"
+            android:textSize="@dimen/textsize12" />
+
+        <TextView
+            android:id="@+id/phone_type_xaliu_item_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin5"
+            android:layout_alignLeft="@id/name_xaliu_item_tv"
+            android:layout_below="@id/name_xaliu_item_tv"
+            android:text="from"
+            android:textColor="@color/content_listview_items_textcolor"
+            android:textSize="@dimen/textsize12" />
+
+        <ImageView
+            android:id="@+id/more_xaliu_item_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/name_xaliu_item_tv"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/margin10"
+            android:background="@drawable/view_onclick"
+            android:src="@drawable/more" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/content_kaxiu_item_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin10"
+        android:text="content"
+        android:textSize="@dimen/textsize16" />
+
+    <com.blue.lib.view.FlowLayout
+        android:id="@+id/img_xaliu_item_fl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin5">
+    </com.blue.lib.view.FlowLayout>
+    
+    <!-- 转发的帖子布局 -->
+
+    <include android:id="@+id/forward_kaxiu_list_item_layout"
+         layout="@layout/forward_note"/>
+    
+    <RelativeLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right">
+        
+        <TextView 
+            android:id="@+id/zan_kaxiu_list_item_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/zan"
+            android:textColor="@color/content_listview_items_textcolor"
+            android:layout_toLeftOf="@+id/share_kaxiu_list_item_tv"
+            android:drawableLeft="@drawable/zan"
+            android:drawablePadding="@dimen/padding5"/>
+        <TextView 
+            android:id="@+id/share_kaxiu_list_item_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/comment_kaxiu_list_item_tv"
+            android:layout_marginLeft="@dimen/margin10"
+            android:paddingLeft="@dimen/padding5"
+            android:drawablePadding="@dimen/padding5"
+            android:text="@string/share"
+            android:textColor="@color/content_listview_items_textcolor"
+            android:drawableLeft="@drawable/share"/>
+        <TextView 
+            android:id="@+id/comment_kaxiu_list_item_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/comment"
+            android:textColor="@color/content_listview_items_textcolor"
+            android:layout_marginLeft="@dimen/margin10"
+            android:layout_toLeftOf="@+id/forward_kaxiu_list_item_tv"
+            android:paddingLeft="@dimen/padding5"
+            android:drawablePadding="@dimen/padding5"
+            android:drawableLeft="@drawable/comment"/>
+        <TextView 
+            android:id="@+id/forward_kaxiu_list_item_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/forward"
+            android:textColor="@color/content_listview_items_textcolor"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/margin10"
+            android:paddingLeft="@dimen/padding5"
+            android:drawablePadding="@dimen/padding5"
+            android:drawableLeft="@drawable/forward"/>
+    </RelativeLayout>
+    
+   
+<!--    <include 
+        layout="@layout/evaluate"/> -->
+
+</LinearLayout>

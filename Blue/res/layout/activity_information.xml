@@ -1,0 +1,153 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".InformationActivity" 
+    android:orientation="vertical"
+    android:padding="@dimen/padding10">
+	
+    <RelativeLayout 
+        android:id="@+id/version_about_rl"
+        style="@style/item_about">
+        
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="@string/comment"/>
+        
+        <TextView 
+            android:id="@+id/version_about_tv"
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="所有人"/>
+        
+    </RelativeLayout>
+    <RelativeLayout 
+        android:id="@+id/function_about_rl"
+        style="@style/item_about">
+        
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="@string/inform_me"/>
+        
+      	<TextView 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="所有人"/>
+        
+    </RelativeLayout>
+    <RelativeLayout 
+        android:id="@+id/inform_about_rl"
+        style="@style/item_about">
+        
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="@string/follower"/>
+        
+        <TextView 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="所有人"/>
+        
+    </RelativeLayout>
+    <RelativeLayout 
+        android:layout_marginTop="@dimen/margin20"
+        style="@style/item_about">
+        
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/inform_new"
+            android:maxHeight="@dimen/height40"/>
+        
+        <ToggleButton
+	        android:id="@+id/remind_inform_tb"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_gravity="center_horizontal"
+	        android:background="@android:color/transparent"
+	        android:button="@drawable/checkbox"
+	        android:checked="false"
+	        android:text=""
+	        android:textOff=""
+	        android:textOn="" />
+        
+    </RelativeLayout>
+    <RelativeLayout 
+        android:id="@+id/function_about_rl"
+        style="@style/item_about">
+        
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/inform_video"/>
+        
+      <ToggleButton
+	        android:id="@+id/remind_inform_tb"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_gravity="center_horizontal"
+	        android:background="@android:color/transparent"
+	        android:button="@drawable/checkbox"
+	        android:checked="false"
+	        android:text=""
+	        android:textOff=""
+	        android:textOn="" />
+        
+    </RelativeLayout>
+    <RelativeLayout 
+        android:id="@+id/inform_about_rl"
+        style="@style/item_about">
+        
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/vibration"/>
+        
+        <ToggleButton
+	        android:id="@+id/remind_inform_tb"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_gravity="center_horizontal"
+	        android:background="@android:color/transparent"
+	        android:button="@drawable/checkbox"
+	        android:checked="false"
+	        android:text=""
+	        android:textOff=""
+	        android:textOn="" />
+        
+    </RelativeLayout>
+    <RelativeLayout 
+        android:id="@+id/inform_about_rl"
+        style="@style/item_about">
+        
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/no_faze_time"/>
+        
+        <TextView 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+			android:drawableRight="@drawable/right_arrow"            
+            android:text="23:00-6:00"/>
+        
+    </RelativeLayout>
+
+</LinearLayout>

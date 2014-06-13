@@ -1,0 +1,166 @@
+package com.blue.ui.user;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.json.JSONObject;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import com.blue.R;
+import com.blue.app.BlueApplication;
+import com.blue.lib.volley.RequestQueue;
+import com.blue.lib.volley.Request.Method;
+import com.blue.lib.volley.Response.Listener;
+import com.blue.lib.volley.toolbox.JsonObjectRequest;
+import com.blue.util.HttpUtils;
+import com.blue.util.LoginUtils;
+
+public class EditInfoActivity extends Activity implements OnClickListener{
+	
+	//得到标识,修改title 0:昵称,1:地区 2:个性签名 3:兴趣爱好
+	private int index;
+	private RequestQueue requestQueue;
+	private Button cancel_btn;
+	private Button submit_btn;
+	private TextView title_tv;
+	private EditText edit_et;
+	
+	private String user_id;
+	private String info;
+	
+	private static final String TAG = "EditInfoActivity";
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.edit_info);
+		initView();
+	}
+
+	private void initView() {
+		requestQueue = BlueApplication.requestQueue;
+		user_id = LoginUtils.getLoginUserid(this);
+		
+		cancel_btn = (Button) findViewById(R.id.cancel_edit_info_btn);
+		submit_btn = (Button) findViewById(R.id.submit_edit_info_btn);
+		title_tv = (TextView) findViewById(R.id.title_edit_info_tv);
+		edit_et = (EditText) findViewById(R.id.edit_edit_info_et);
+		
+		genIntentData();
+		
+		cancel_btn.setOnClickListener(this);
+		submit_btn.setOnClickListener(this);
+		
+	}
+	private void genIntentData() {
+		Intent intent = getIntent();
+		index = intent.getIntExtra("index", 0);
+		
+		switch (index) {
+		case 0:
+			title_tv.setText(R.string.nickname);
+			break;
+		case 1:
+			title_tv.setText(R.string.address);
+			break;
+		case 2:
+			title_tv.setText(R.string.sign);
+			break;
+		case 3:
+			title_tv.setText(R.string.interest);
+			break;
+		}
+	}
+	
+	private Map<String,String> PushtoMap() {
+		Map<String,String> map = new HashMap<String,String>();
+		info = edit_et.getText().toString();
+		
+		map.put("user_id", user_id);
+		
+		switch (index) {
+		case 0:
+			map.put("name", info);
+			break;
+		case 1:
+			map.put("address", info);
+			break;
+		case 2:
+			map.put("signature", info);
+			break;
+		case 3:
+			map.put("interest", info);
+			break;
+		}
+		return map;
+	}
+	
+	private void submitData() {
+		JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Method.POST, HttpUtils.initArticleURL("user_update"),
+				PushtoMap(), new Listener<JSONObject>() {
+
+					@Override
+					public void onResponse(JSONObject response) {
+						Log.i(TAG, "response" + response);
+						if (response.optString("code").equals("1")) {
+							returnResult();
+						}
+					}
+				}, null);
+		requestQueue.add(jsonObjectRequest);
+		requestQueue.start();
+	}
+	
+	private void returnResult() {
+		
+		Intent intent = new Intent();
+		
+		switch (index) {
+		case 0:
+			intent.putExtra("name", info);
+			break;
+		case 1:
+			intent.putExtra("address", info);
+			break;
+		case 2:
+			intent.putExtra("sign", info);
+			break;
+		case 3:
+			intent.putExtra("interest", info);
+			break;
+
+		default:
+			break;
+		}
+	}
+	
+	@Override
+	public void onClick(View v) {
+		
+		switch (v.getId()) {
+		case R.id.cancel_edit_info_btn:
+			finish();
+			break;
+		case R.id.submit_edit_info_btn:
+			submitData();
+			startActivity( new Intent(this, EditDataActivity.class));
+			this.finish();
+			break;
+		}
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		requestQueue.stop();
+	}
+	
+}

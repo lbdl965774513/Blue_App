@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app1="http://schemas.android.com/apk/res/com.blue"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@null"
+    android:orientation="vertical" >
+
+    <include
+        android:id="@+id/actionbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/actionbar" />
+
+    <FrameLayout
+        android:id="@+id/content_comment_fl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/actionbar_layout"
+        android:layout_margin="@dimen/margin10" >
+
+        <EditText
+            android:id="@+id/content_comment_et"
+            android:layout_width="match_parent"
+            android:layout_height="364dp"
+            android:background="@null"
+            android:gravity="top|left"
+            android:hint="@string/comment_contenthint" >
+        </EditText>
+
+        <com.blue.lib.view.FlowLayout
+            android:id="@+id/photo_pic_fl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:paddingLeft="@dimen/padding5"
+            app1:horizontalSpacing="@dimen/padding5"
+            app1:orientation="horizontal" >
+        </com.blue.lib.view.FlowLayout>
+<!-- 
+        <TextView
+            android:id="@+id/location_comment_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|left"
+            android:layout_margin="@dimen/margin5"
+            android:text="location" /> -->
+    </FrameLayout>
+
+    <CheckBox
+        android:id="@+id/checkBox_comment_cb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/interact_comment_rl"
+        android:layout_alignParentLeft="true"
+        android:text="@string/comment_checkbox" />
+
+    <RelativeLayout
+        android:id="@+id/interact_comment_rl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/gray02"
+        android:padding="@dimen/padding5" >
+
+        <LinearLayout
+            android:id="@+id/interact_comment_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/camera_comment_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin35"
+                android:background="@drawable/camera_comment" />
+
+            <ImageView
+                android:id="@+id/expression_comment_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin35"
+                android:background="@drawable/expression_comment" />
+
+            <ImageView
+                android:id="@+id/photo_comment_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin35"
+                android:background="@drawable/loc_pic_comment" />
+
+            <ImageView
+                android:id="@+id/inform_comment_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin35"
+                android:background="@drawable/inform_comment" />
+        </LinearLayout>
+        <GridView
+        android:id="@+id/tweet_pub_faces"
+        android:layout_width="fill_parent"
+        android:layout_height="220dip"
+        android:background="@color/face_bg"
+        android:layout_below="@+id/interact_comment_ll"
+        android:columnWidth="50dip"
+        android:fadingEdge="none"
+        android:gravity="center"
+        android:numColumns="auto_fit"
+        android:scrollingCache="false"
+        android:stretchMode="columnWidth"
+        android:visibility="gone" />
+    </RelativeLayout>
+
+   
+</RelativeLayout>

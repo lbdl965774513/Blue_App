@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+    <!--     <ImageView
+            android:id="@+id/ic_note_details_iv"
+            android:layout_width="@dimen/height50"
+            android:layout_height="@dimen/height50"
+            android:layout_margin="@dimen/margin10"
+            android:src="@drawable/phone_about" /> -->
+        
+        <com.blue.lib.view.RoundImageView 
+            android:id="@+id/ic_note_details_iv"
+            android:layout_width="@dimen/height50"
+            android:layout_height="@dimen/height50"
+            android:layout_margin="@dimen/margin10"
+            android:src="@drawable/phone_about" />
+
+        <TextView
+            android:id="@+id/name_note_details_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/ic_note_details_iv"
+            android:layout_marginLeft="@dimen/margin5"
+            android:layout_toRightOf="@id/ic_note_details_iv"
+            android:textSize="@dimen/textsize18" />
+
+        <TextView
+            android:id="@+id/ctime_note_details_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignBottom="@id/name_note_details_tv"
+            android:layout_marginRight="@dimen/margin10"
+            android:text="ctime"
+            android:textColor="@color/content_listview_items_textcolor" />
+
+        <TextView
+            android:id="@+id/phone_type_note_details_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/name_note_details_tv"
+            android:layout_alignLeft="@id/name_note_details_tv"
+            android:layout_alignBottom="@id/ic_note_details_iv"
+            android:text="phone_type"
+            android:textColor="@color/content_listview_items_textcolor" />
+
+        <TextView
+            android:id="@+id/content_note_details_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/ic_note_details_iv"
+            android:layout_below="@id/ic_note_details_iv"
+            android:layout_marginTop="@dimen/margin5"
+            android:textSize="@dimen/textsize16"
+            android:text="content" />
+
+        <com.blue.lib.view.FlowLayout
+            android:id="@+id/img_note_details_fl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/content_note_details_tv"
+            android:layout_marginLeft="@dimen/margin10"
+            android:layout_marginTop="@dimen/margin5" >
+        </com.blue.lib.view.FlowLayout>
+    </RelativeLayout>
+
+    <!-- 转发的帖子布局 -->
+
+    <include
+        android:id="@+id/forward_note_details_layout"
+        layout="@layout/forward_note" />
+    
+	<!-- 赞  评论列表 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white_more"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/zan_note_details_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:background="@drawable/evaluate_onclick"
+                android:padding="@dimen/padding10"
+                android:text="@string/zan_list" 
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/comment_note_details_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:background="@drawable/evaluate_onclick"
+                android:padding="@dimen/padding10"
+                android:text="@string/comment_list"
+                android:visibility="gone" />
+        </LinearLayout>
+
+</LinearLayout>

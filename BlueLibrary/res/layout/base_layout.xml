@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <!-- <RelativeLayout -->
+    <!-- android:id="@+id/base_layout_title_bar_rl" -->
+    <!-- android:layout_width="match_parent" -->
+    <!-- android:layout_height="@dimen/base_g_item_min_h" -->
+    <!-- android:background="@android:color/white" > -->
+
+
+    <!-- <TextView -->
+    <!-- android:id="@+id/base_titlebar_left_tv" -->
+    <!-- android:layout_width="match_parent" -->
+    <!-- android:layout_height="match_parent" -->
+    <!-- android:layout_centerInParent="true" -->
+    <!-- android:gravity="center" /> -->
+
+
+    <!-- <TextView -->
+    <!-- android:id="@+id/base_titlebar_center_tv" -->
+    <!-- android:layout_width="wrap_content" -->
+    <!-- android:layout_height="match_parent" -->
+    <!-- android:gravity="center" -->
+    <!-- android:minWidth="@dimen/base_g_item_min_h" /> -->
+
+
+    <!-- <TextView -->
+    <!-- android:id="@+id/base_titlebar_right_tv" -->
+    <!-- android:layout_width="wrap_content" -->
+    <!-- android:layout_height="match_parent" -->
+    <!-- android:layout_alignParentRight="true" -->
+    <!-- android:gravity="center" -->
+    <!-- android:minWidth="@dimen/base_g_item_min_h" /> -->
+    <!-- </RelativeLayout> -->
+
+    <RelativeLayout
+        android:id="@+id/base_layout_bottom_ad_rl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
+
+    <RelativeLayout
+        android:id="@+id/base_layout_center_content_rl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/base_layout_bottom_ad_rl" >
+    </RelativeLayout>
+
+</RelativeLayout>

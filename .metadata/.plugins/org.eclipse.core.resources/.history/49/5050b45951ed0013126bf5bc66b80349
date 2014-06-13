@@ -1,0 +1,179 @@
+package com.blue.ui.about;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.json.JSONObject;
+
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import com.blue.R;
+import com.blue.adapter.CaseAdapter;
+import com.blue.adapter.KaXiuListAdapter;
+import com.blue.bean.Note;
+import com.blue.conninternet.ListDataRequest;
+import com.blue.lib.ptr.PullToRefreshBase;
+import com.blue.lib.ptr.PullToRefreshBase.OnLastItemVisibleListener;
+import com.blue.lib.ptr.PullToRefreshBase.OnRefreshListener;
+import com.blue.lib.ptr.PullToRefreshListView;
+import com.blue.lib.volley.Request.Method;
+import com.blue.lib.volley.RequestQueue;
+import com.blue.lib.volley.Response.Listener;
+import com.blue.lib.volley.toolbox.JsonObjectRequest;
+import com.blue.lib.volley.toolbox.Volley;
+import com.blue.util.HttpUtils;
+
+/**
+ * @author SLJM
+ * @desc 关于深蓝    1:开发案例   2: 提供的服务
+ *
+ */
+public class CaseFragment extends Fragment implements OnLastItemVisibleListener,OnRefreshListener<ListView>  {
+	
+	private String url;
+	private PullToRefreshListView case_lv;
+	private RequestQueue requestQueue;
+	private static int index;
+	// 每页第一个帖子的数字
+	private int page_number = 0;
+	// 分页长度
+	private static final int page_length = 5;
+	private CaseAdapter caseAdapter;
+	private static final String TAG = "CaseFragment"; 
+	
+	public static CaseFragment getInstance(int page) {
+		index = page;
+		CaseFragment frag = new CaseFragment();
+		return frag;
+	}
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+	}
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+		
+		View view = inflater.inflate(R.layout.case_about, container, false);
+		
+		initView(view, inflater);
+		getCaseInfo(page_number);
+		
+		
+		
+		return view;
+	}
+	
+	/**初始化*/
+	private void initView(View contentView, LayoutInflater inflater) {
+		
+		requestQueue = Volley.newRequestQueue(getActivity());
+		url = HttpUtils.initArticleURL("article_list");
+		
+		case_lv = (PullToRefreshListView)contentView.findViewById(R.id.about_lv);
+		
+		case_lv.setOnRefreshListener(this);
+		case_lv.setOnLastItemVisibleListener(this);
+	}
+	
+	private Map<String,String> PushtoMap(int page_start) {
+		Map <String,String> map = new HashMap<String, String>();
+		
+		map.put("length", String.valueOf(page_length));
+		map.put("start", String.valueOf(page_start));
+		switch (index) {
+		//案例
+		case 1:
+			map.put("type", String.valueOf(6));
+			break;
+		//提供的服务
+		case 2:
+			map.put("type", String.valueOf(7));
+			break;
+		}
+		return map;
+
+	}
+
+	/**获取网络数据*/
+	private void getCaseInfo(int length) {
+		
+		ListDataRequest listDataRequest = new ListDataRequest(Method.POST,url,PushtoMap(length), 
+				new Listener<ArrayList<Note>>() {
+
+					@Override
+					public void onResponse(ArrayList<Note> response) {
+						InitAdapter(response);
+					}
+				}, null);
+	
+		requestQueue.add(listDataRequest);
+		requestQueue.start();
+	}
+	
+	private void InitAdapter(ArrayList<Note> response) {
+		switch (index) {
+		case 1:
+			InitCaseAdapter(response);
+			break;
+
+		case 2:
+			InitServiceAdapter(response);
+			break;
+		}
+	}
+	
+	private void InitCaseAdapter(ArrayList<Note> response) {
+		if(caseAdapter == null){
+			caseAdapter = new CaseAdapter(getActivity(),response);
+			case_lv.setAdapter(caseAdapter);
+		}else{
+			if (page_number == 1) {
+				caseAdapter.addFirstPageData(response);
+			} else {
+				caseAdapter.addOtherPageData(response);
+			}
+		}
+	}
+	
+	private void InitServiceAdapter(ArrayList<Note> response) {
+		ArrayList<Note> note_array = response;
+		ArrayList<String> info_array = new ArrayList<String>();
+		for (int i = 0; i < note_array.size(); i++) {
+			info_array.add(note_array.get(i).content);
+		}
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),R.layout.arraylist_item, info_array);
+		case_lv.setAdapter(adapter);
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		requestQueue.stop();
+	}
+	@Override
+	public void onLastItemVisible() {
+		page_number = page_number + page_length;
+		getCaseInfo(page_number);
+
+	}
+
+	@Override
+	public void onRefresh(PullToRefreshBase<ListView> refreshView) {
+		// TODO Auto-generated method stub
+		page_number = 0;
+		getCaseInfo(page_number);
+		
+	}
+
+
+}
